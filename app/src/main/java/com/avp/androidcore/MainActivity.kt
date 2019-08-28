@@ -35,18 +35,25 @@ class MainActivity : AppCompatActivity(), Client.ClientCallback {
         super.onDestroy()
     }
 
-    override fun onPostCreate(savedInstanceState: Bundle?) {
-        super.onPostCreate(savedInstanceState)
+    override fun onStart() {
+        super.onStart()
         mPostOffice = PostOffice("", LinkedHashMap())
         mPostOffice!!.start()
         mSimulator = Simulator(mPostOffice!!, this)
         mSimulator!!.createClients(10).start()
     }
 
+
     override fun onNewPost(receiver: Client, sender: Client, message: String) {
         runOnUiThread {
             val position = mPostListAdapter?.feedItemList?.size
-            mPostListAdapter?.feedItemList?.add(PostListAdapter.FeedItem(sender.name, receiver.name, message))
+            mPostListAdapter?.feedItemList?.add(
+                PostListAdapter.FeedItem(
+                    sender.name,
+                    receiver.name,
+                    message
+                )
+            )
             position?.let {
                 postFeedRecyclerView.adapter?.notifyItemInserted(position)
                 postFeedRecyclerView.smoothScrollToPosition(position)
