@@ -1,10 +1,9 @@
 package com.avp.androidcore.looper_handler_handlerthread
 
-import android.util.Log
 import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.atomic.AtomicBoolean
 
-class SimpleWorker(val TAG: String = "SimpleWorker") : Thread(TAG) {
+class SimpleWorker(TAG: String = "SimpleWorker") : Thread(TAG) {
     init {
         start()
     }
@@ -23,7 +22,6 @@ class SimpleWorker(val TAG: String = "SimpleWorker") : Thread(TAG) {
         while (mAlive.get()) {
             val task = mTaskQueue.poll()
             task?.run()
-            Log.e(TAG, "SimpleWorker Terminated!")
         }
     }
 

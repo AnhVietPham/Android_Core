@@ -1,4 +1,4 @@
-package com.avp.androidcore.looper_handler_handlerthread
+package com.avp.androidcore.looper_handler_handlerthread.postoffice
 
 class Post(
     val senderId: Int,

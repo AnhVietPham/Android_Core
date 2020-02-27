@@ -1,4 +1,4 @@
-package com.avp.androidcore.looper_handler_handlerthread
+package com.avp.androidcore.looper_handler_handlerthread.postoffice
 
 class Client(val name: String, private val callback: ClientCallback) {
 

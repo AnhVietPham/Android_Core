@@ -1,4 +1,4 @@
-package com.avp.androidcore.looper_handler_handlerthread
+package com.avp.androidcore.looper_handler_handlerthread.postoffice
 
 import kotlin.random.Random
 
@@ -15,7 +15,12 @@ class Simulator(
     fun createClients(num: Int): Simulator {
         for (i in 0 until num) {
             try {
-                postOffice.register(Client("BOT$i", callback))
+                postOffice.register(
+                    Client(
+                        "BOT$i",
+                        callback
+                    )
+                )
             } catch (e: Exception) {
                 e.printStackTrace()
             }
@@ -40,7 +45,13 @@ class Simulator(
             }
 
             try {
-                postOffice.sendPost(Post(client1Id, client2Id, getRandomMessage()))
+                postOffice.sendPost(
+                    Post(
+                        client1Id,
+                        client2Id,
+                        getRandomMessage()
+                    )
+                )
             } catch (e: Exception) {
                 e.printStackTrace()
             }

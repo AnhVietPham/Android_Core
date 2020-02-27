@@ -1,96 +1,70 @@
 package com.avp.androidcore
 
-import android.content.Context
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.os.Message
 import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.widget.TextView
-import com.avp.androidcore.looper_handler_handlerthread.Client
-import com.avp.androidcore.looper_handler_handlerthread.PostOffice
-import com.avp.androidcore.looper_handler_handlerthread.Simulator
+import android.util.Log
+import com.avp.androidcore.looper_handler_handlerthread.SimpleWorker
 import kotlinx.android.synthetic.main.activity_main.*
-import java.util.*
 
 
-class MainActivity : AppCompatActivity(), Client.ClientCallback {
-    private var mSimulator: Simulator? = null
-    private var mPostOffice: PostOffice? = null
-    private var mPostListAdapter: PostListAdapter? = null
+class MainActivity : AppCompatActivity() {
+
+    private var mSimpleWorker: SimpleWorker? = null
+    private var mHandler: Handler? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        postFeedRecyclerView.layoutManager = LinearLayoutManager(this)
-        mPostListAdapter = PostListAdapter(this, LinkedList())
-        postFeedRecyclerView.adapter = mPostListAdapter
+        mSimpleWorker = SimpleWorker()
+        mSimpleWorker
+            ?.execute(Runnable {
+                Thread.sleep(1000)
+                val message = Message.obtain()
+                message.obj = "Task 1 Completed!"
+                mHandler?.sendMessage(message)
+                Log.e("COUNT", "Task 1 Completed!")
+            })
+            ?.execute(Runnable {
+                Thread.sleep(500)
+                val message = Message.obtain()
+                message.obj = "Task 2 Completed!"
+                mHandler?.sendMessage(message)
+                Log.e("COUNT", "Task 2 Completed!")
+            })
+            ?.execute(Runnable {
+                Thread.sleep(2000)
+                val message = Message.obtain()
+                message.obj = "Task 3 Completed!"
+                mHandler?.sendMessage(message)
+                Log.e("COUNT", "Task 3 Completed!")
+            })
+            ?.execute(Runnable {
+                Thread.sleep(400)
+                val message = Message.obtain()
+                message.obj = "Task 4 Completed!"
+                mHandler?.sendMessage(message)
+                Log.e("COUNT", "Task 4 Completed!")
+            })
+            ?.execute(Runnable {
+                Thread.sleep(5000)
+                val message = Message.obtain()
+                message.obj = "Task 5 Completed!"
+                mHandler?.sendMessage(message)
+                Log.e("COUNT", "Task 4 Completed!")
+            })
+        mHandler = object : Handler(Looper.getMainLooper()) {
+            override fun handleMessage(msg: Message?) {
+                super.handleMessage(msg)
+                tvMessage.text = msg?.obj.toString()
+            }
+        }
     }
 
     override fun onDestroy() {
-        mSimulator?.stop()
-        mPostOffice?.quit()
         super.onDestroy()
-    }
-
-    override fun onStart() {
-        super.onStart()
-        mPostOffice = PostOffice("", LinkedHashMap())
-        mPostOffice!!.start()
-        mSimulator = Simulator(mPostOffice!!, this)
-        mSimulator!!.createClients(10).start()
-    }
-
-
-    override fun onNewPost(receiver: Client, sender: Client, message: String) {
-        runOnUiThread {
-            val position = mPostListAdapter?.feedItemList?.size
-            mPostListAdapter?.feedItemList?.add(
-                PostListAdapter.FeedItem(
-                    sender.name,
-                    receiver.name,
-                    message
-                )
-            )
-            position?.let {
-                postFeedRecyclerView.adapter?.notifyItemInserted(position)
-                postFeedRecyclerView.smoothScrollToPosition(position)
-            }
-        }
-    }
-
-    class PostListAdapter(private val context: Context, val feedItemList: LinkedList<FeedItem>) :
-        RecyclerView.Adapter<PostListAdapter.ViewHolder>() {
-
-        override fun getItemCount(): Int {
-            return feedItemList.size
-        }
-
-
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-            val view = LayoutInflater.from(context).inflate(R.layout.item_list_view, parent, false)
-            return ViewHolder(view)
-        }
-
-        override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-            holder.onBind(position)
-        }
-
-        class FeedItem(var senderName: String, var receiverName: String, var message: String)
-
-        inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-            private var senderNameTxt: TextView = itemView.findViewById(R.id.senderNameTxt)
-            private var receiverNameTxt: TextView = itemView.findViewById(R.id.receiverNameTxt)
-            private var msgTxt: TextView = itemView.findViewById(R.id.msgTxt)
-
-            fun onBind(position: Int) {
-                val feedItem = feedItemList[position]
-                senderNameTxt.text = feedItem.senderName
-                receiverNameTxt.text = feedItem.receiverName
-                msgTxt.text = feedItem.message
-            }
-        }
+        mSimpleWorker?.quit()
     }
 }

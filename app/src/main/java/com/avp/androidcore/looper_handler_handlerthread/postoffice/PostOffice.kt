@@ -1,4 +1,4 @@
-package com.avp.androidcore.looper_handler_handlerthread
+package com.avp.androidcore.looper_handler_handlerthread.postoffice
 
 import android.os.Handler
 import android.os.HandlerThread
@@ -11,10 +11,14 @@ class PostOffice(
 ) : HandlerThread(name) {
     fun register(client: Client?) {
         if (client == null) {
-            throw InvalidRequestException("The Client can't be null")
+            throw InvalidRequestException(
+                "The Client can't be null"
+            )
         }
         if (mClientDetailsMap.containsKey(client.mId)) {
-            throw AlreadyExistsException("The Client is already registered with this Id")
+            throw AlreadyExistsException(
+                "The Client is already registered with this Id"
+            )
         }
         val clientWeakReference: WeakReference<Client> = WeakReference(client)
         val handler = object : Handler(looper) {
@@ -22,10 +26,22 @@ class PostOffice(
                 val clientA = clientWeakReference.get()
                 if (clientA != null) {
                     if (msg?.obj is String) {
-                        clientA.onPostReceived(Post(msg.arg1, msg.arg2, msg.obj.toString()))
+                        clientA.onPostReceived(
+                            Post(
+                                msg.arg1,
+                                msg.arg2,
+                                msg.obj.toString()
+                            )
+                        )
                     } else {
                         msg?.let {
-                            clientA.onPostReceived(Post(msg.arg1, msg.arg2, "No body present"))
+                            clientA.onPostReceived(
+                                Post(
+                                    msg.arg1,
+                                    msg.arg2,
+                                    "No body present"
+                                )
+                            )
                         }
                     }
                 }
@@ -36,10 +52,14 @@ class PostOffice(
 
     fun sendPost(post: Post?){
         if (post == null){
-            throw InvalidRequestException("Post can't be null")
+            throw InvalidRequestException(
+                "Post can't be null"
+            )
         }
         if (!mClientDetailsMap.containsKey(post.receiverId)){
-            throw NotRegisteredException("Post receiver is not register")
+            throw NotRegisteredException(
+                "Post receiver is not register"
+            )
         }
         val handler = mClientDetailsMap[post.receiverId]
         val message = Message()
