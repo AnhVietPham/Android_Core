@@ -10,7 +10,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".dynamic_base_url.DynamicBaseUrlActivity">
+        <activity android:name=".picture_activity.PictureActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
